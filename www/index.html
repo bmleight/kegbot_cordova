@@ -2,29 +2,35 @@
 
 <html>
     <head>
-        <title>Simple Serial</title>
+        <title>Kegbot Serial Controller</title>
         <link rel="stylesheet" type="text/css" href="css/JoyStick.css" />
     </head>
 
     <body>
+    	
         <div class="app">
-            <div id="ui">
-                <button id="connectButton">Connect</button>
-            </div>
-        <div id="message">Hello.</div>
-        
-        <div id="joystick1" class="JoyStick"></div>
-        
-        <br>
-        <br>
-        <br>
-        <br>
-        
-        <div id="debug">
-        	<div><span id="left-motor-speed">0</span>%</div>
-        	<div><span id="right-motor-speed">0</span>%</div>
-        </div>
-        
+        	
+        	<div class="wrapper">
+        		  
+	        	<div id="message">Kegbot Controller</div>
+	        
+	            <div id="ui">
+	                <button id="connectButton" class="btn">Connect</button>
+	            </div>
+	          
+		        <div id="joystick1" class="JoyStick"> </div>
+		        
+		        <div id="debug">
+		        	<h2>Debug Statistics</h2>
+		        	<div>Left Motor Speed: <span id="left-motor-speed">0</span>%</div>
+		        	<div>Right Motor Speed: <span id="right-motor-speed">0</span>%</div>
+		        </div>
+		       
+		        <div id="obama"> <p>Cheers!</p> </div>
+		        
+		        <div> MKL MKL MKL MKL, D U FVK?</div>
+        	</div>
+        	
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/jquery.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui.min.js"></script>
@@ -34,5 +40,7 @@
         <script>
             app.initialize();
         </script>
+        
     </body>
+    
 </html>
