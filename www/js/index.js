@@ -7,10 +7,14 @@
 
 
 var app = {
-    macAddress: "20:13:11:11:48:43",  // get your mac address from bluetoothSerial.list
+    macAddress: "98:D3:31:80:46:D4",  // get your mac address from bluetoothSerial.list
     chars: "",
     speed_left: 0,
     speed_right: 0,
+    ir_1: null,
+    ir_2: null,
+    ir_3: null,
+    ir_4: null,
 
 /*
     Application constructor
@@ -20,7 +24,13 @@ var app = {
     	var left_motor_speed = document.getElementById("left-motor-speed");
     	var right_motor_speed = document.getElementById("right-motor-speed");
     	
+    	var  = document.getElementById("left-motor-speed");
+    	var right_motor_speed = document.getElementById("right-motor-speed");
     	
+    	this.ir_1 = document.getElementById("ir_1");
+    	this.ir_2 = document.getElementById("ir_2");
+    	this.ir_3 = document.getElementById("ir_3");
+    	this.ir_4 = document.getElementById("ir_4");
     	
         this.bindEvents();
         console.log("Starting SimpleSerial app");
