@@ -66,23 +66,34 @@ var app = {
 		    //console.log(vec.x, vec.y);
 		});
 		
-		iid = setInterval(function() {
-		    
-		    var command = "{left:" + app.speed_left + ",right:" + app.speed_right + "}\n";
-		    
-		    bluetoothSerial.write(command, app.successWrite, app.failWrite);
-		    
-		    
-		    //console.log(magnitude, theta, ximpulse, yimpulse);
-		    left_motor_speed.innerHTML = app.speed_left;
-		    right_motor_speed.innerHTML = app.speed_right;
-		    
-		    //console.log(vec, tester.css('top'), tester.css('left'));
-		    //tester.css('top', (parseInt(tester.css('top').substr(0, tester.css('top').length - 2), 10) - vec.y) + 'px');
-		    //tester.css('left', (parseInt(tester.css('left').substr(0, tester.css('left').length - 2), 10) + vec.x) + 'px');
-		    
-		}, 50);
-        
+		//My console ran nonstop because I didn't have a bluetooth dongle and 
+		// bluetoothSerial was not defined, so I added in a quick check - you may want to improve upon the idea or remove it. 
+		bluetoothSerial = "blank";
+		
+		if(bluetoothSerial != "blank"){
+			
+			iid = setInterval(function() {
+			    
+			    var command = "{left:" + app.speed_left + ",right:" + app.speed_right + "}\n";
+		
+			    bluetoothSerial.write(command, app.successWrite, app.failWrite);
+			    
+			    
+			    //console.log(magnitude, theta, ximpulse, yimpulse);
+			    left_motor_speed.innerHTML = app.speed_left;
+			    right_motor_speed.innerHTML = app.speed_right;
+			    
+			    //console.log(vec, tester.css('top'), tester.css('left'));
+			    //tester.css('top', (parseInt(tester.css('top').substr(0, tester.css('top').length - 2), 10) - vec.y) + 'px');
+			    //tester.css('left', (parseInt(tester.css('left').substr(0, tester.css('left').length - 2), 10) + vec.x) + 'px');
+			     
+			}, 50);
+		
+         } else{
+		    	
+		    	console.log('Bluetooth is not connected.');
+		    	
+			}
     },
     
     tankdrive: function(x, y) {

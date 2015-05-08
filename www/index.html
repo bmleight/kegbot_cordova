@@ -2,37 +2,41 @@
 
 <html>
     <head>
-        <title>Simple Serial</title>
+        <title>Kegbot Serial Controller</title>
         <link rel="stylesheet" type="text/css" href="css/JoyStick.css" />
     </head>
 
     <body>
+    	
         <div class="app">
-            <div id="ui">
-                <button id="connectButton">Connect</button>
-            </div>
-        <div id="message">Hello.</div>
-        
-        <div id="joystick1" class="JoyStick"></div>
-        
-        <br>
-        <br>
-        <br>
-        <br>
-        
-        <div id="debug">
-        	<div><span id="left-motor-speed">0</span>%</div>
-        	<div><span id="right-motor-speed">0</span>%</div>
+        	
+        	<div class="wrapper">
+        		
+	        	<div id="message">Kegbot Controller</div>
+	        	
+	            <div id="ui">
+	                <button id="connectButton" class="btn">Connect</button>
+	            </div>
+	            
+	            <table style="width:100%; text-align:center;">
+		        	<tr>
+			        	<td id="ir_1">10</td>
+			        	<td id="ir_2">10</td>
+			        	<td id="ir_3">10</td>
+			        	<td id="ir_4">10</td>
+			        </tr>
+		        </table>
+	            
+		        <div id="joystick1" class="JoyStick"> </div>
+		        
+		        <div id="debug">
+		        	<h2>Debug Statistics</h2>
+		        	<div>Left Motor Speed: <span id="left-motor-speed">0</span>%</div>
+		        	<div>Right Motor Speed: <span id="right-motor-speed">0</span>%</div>
+		        </div>
+        	</div>
+        	
         </div>
-        
-        <table style="width:100%; text-align:center;">
-        	<tr>
-	        	<td id="ir_1">10</td>
-	        	<td id="ir_2">10</td>
-	        	<td id="ir_3">10</td>
-	        	<td id="ir_4">10</td>
-	        </tr>
-        </table>
         
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -40,8 +44,11 @@
         <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
         <script type="text/javascript" src="js/JoyStick.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
+        
         <script>
             app.initialize();
         </script>
+        
     </body>
+    
 </html>
