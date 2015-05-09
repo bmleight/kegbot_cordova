@@ -7,47 +7,180 @@
 
 
 var app = {
-    macAddress: "98:D3:31:80:46:D4",  // get your mac address from bluetoothSerial.list
-    chars: "",
+	
+    //bluetooth mac address
+    macAddress: "98:D3:31:80:46:D4",
+    
+    //left and right motor speeds
     speed_left: 0,
     speed_right: 0,
+    
+    //left and right motor speed display elements
+    right_motor_speed_el: null,
+    left_motor_speed_el: null,
+	
+    //ir sensors - make array
     ir_1: null,
     ir_2: null,
     ir_3: null,
     ir_4: null,
-
-/*
-    Application constructor
- */
+    
+    bluetooth_debug: null,
+    
     initialize: function() {
     	
-    	var left_motor_speed = document.getElementById("left-motor-speed");
-    	var right_motor_speed = document.getElementById("right-motor-speed");
+    	app.store_elements();
+    	app.init_joystick();
     	
-    	var  = document.getElementById("left-motor-speed");
-    	var right_motor_speed = document.getElementById("right-motor-speed");
+    	//register for the deviceready event
+    	document.addEventListener('deviceready', this.onDeviceReady, false);
+        //connectButton.addEventListener('touchend', app.manageConnection, false);
+        
+    },
+    
+	/*
+	    this runs when the device is ready for user interaction:
+	*/
+    onDeviceReady: function() {
+    	
+        // check if Bluetooth is on
+        bluetoothSerial.isEnabled(
+            app.openBluetoothConnection,
+            app.bluetoothNotEnabled
+        );
+        
+        return;
+        
+        // if isEnabled returns failure, this function is called:
+        var notEnabled = function() {
+            alert('ohhhhh no');
+        }
+        
+        var listPorts = function() {
+            // list the available BT ports:
+            bluetoothSerial.list(
+                function(results) {
+                    app.display(JSON.stringify(results));
+                },
+                function(error) {
+                    app.display(JSON.stringify(error));
+                }
+            );
+        }
+		
+    },
+    
+    openBluetoothConnection: function() {
+    	
+    	bluetoothSerial.connect(
+            app.macAddress,  // device to connect to
+            app.bluetoothSuccess,    // start listening if you succeed
+            app.bluetoothFail    // show the error if you fail
+        );
+        
+    },
+    
+    bluetoothSuccess: function() {
+    	
+    	app.updateState('control');
+    	
+    	app.bluetooth_write_interval = setInterval(function() {
+		    
+		    var command = "{left:" + app.speed_left + ",right:" + app.speed_right + "}\n";
+	
+		    bluetoothSerial.write(command, app.successWrite, app.failWrite);
+		    
+		    left_motor_speed_el.innerHTML = app.speed_left;
+		    right_motor_speed_el.innerHTML = app.speed_right;
+		    
+		}, 50);
+		
+    	app.bluetooth_read_interval = setInterval(function() {
+		    bluetoothSerial.readUntil('\n', app.bluetoothReadSuccess, app.bluetoothReadFail);
+		}, 50);
+		
+    },
+    
+    bluetoothReadSuccess: function(data) {
+    	
+    	$('#bluetooth-reading').html(data);
+    	
+    	var irs = JSON.parse(data);
+    	
+    	app.ir_1.innerHTML = irs.readings[0];
+	    app.ir_2.innerHTML = irs.readings[1];
+	    app.ir_3.innerHTML = irs.readings[2];
+	    app.ir_4.innerHTML = irs.readings[3];
+    	
+    },
+    
+    bluetoothReadFail: function() {
+    	alert('blue tooth read fail');
+    },
+    
+    bluetoothNotEnabled: function() {
+    	alert('blue tooth is not fucking enabled you hard on');
+    },
+    
+    updateState: function(state) {
+    	
+    	var state_name = "#state_" + state;
+    	
+    	var state_el = $(state_name);
+    	
+    	if(state_el) {
+    		
+    		//get the current state
+    		var old_state = $('.state.current');
+    		
+    		//hide it
+    		old_state.hide();
+    		
+    		//show the new state
+    		state_el.show();
+    		
+    	} else {
+    		alert('could not transition to state: ' + state_name);
+    	}
+    	
+    },
+    
+	/*
+	    subscribes to a Bluetooth serial listener for newline
+	    and changes the button:
+	*/
+    openPort: function() {
+    	/*
+        // if you get a good Bluetooth serial connection:
+        app.display("Connected to: " + app.macAddress);
+        // change the button's name:
+        connectButton.innerHTML = "Disconnect";
+        // set up a listener to listen for newlines
+        // and display any new data that's come in since
+        // the last newline:
+        bluetoothSerial.subscribe('\n', function (data) {
+            app.clear();
+            app.display(data);
+        });*/
+    },
+
+    store_elements: function() {
+    	
+    	this.left_motor_speed_el = document.getElementById("left-motor-speed");
+    	this.right_motor_speed_el = document.getElementById("right-motor-speed");
     	
     	this.ir_1 = document.getElementById("ir_1");
     	this.ir_2 = document.getElementById("ir_2");
     	this.ir_3 = document.getElementById("ir_3");
     	this.ir_4 = document.getElementById("ir_4");
     	
-        this.bindEvents();
-        console.log("Starting SimpleSerial app");
-        
-        //listeningElement.setAttribute('style', 'display:none;');
-        
-        vec = Object.seal({
-		    x: 0,
-		    y: 0
-		});
-		
-		tester = $('#tester');
-		tester.draggable();
-		
+    	this.bluetooth_debug = $('#bluetooth-reading');
+    	
+    },
+    
+    init_joystick: function() {
+    	
 		JoyStick('#joystick1', 120, function(magnitude, theta, x, y) {
-		    
-		    console.log(magnitude, theta, x, y);
 		    
 		    //cap at 50
 		    y = y > 100 ? 100 : y;
@@ -55,45 +188,10 @@ var app = {
 		    x = x > 100 ? 100 : x;
 		    x = x < -100 ? -100 : x;
 		    
-		    //speed_left = speed_right = Math.floor(y / 50 * 100);
-		    
 		    app.tankdrive(x, y);
 		    
-		    
-		    //vec.x = 10 * (ximpulse / 80);
-		    //vec.y = 10 * (yimpulse / 80);
-		    
-		    //console.log(vec.x, vec.y);
 		});
 		
-		//My console ran nonstop because I didn't have a bluetooth dongle and 
-		// bluetoothSerial was not defined, so I added in a quick check - you may want to improve upon the idea or remove it. 
-		bluetoothSerial = "blank";
-		
-		if(bluetoothSerial != "blank"){
-			
-			iid = setInterval(function() {
-			    
-			    var command = "{left:" + app.speed_left + ",right:" + app.speed_right + "}\n";
-		
-			    bluetoothSerial.write(command, app.successWrite, app.failWrite);
-			    
-			    
-			    //console.log(magnitude, theta, ximpulse, yimpulse);
-			    left_motor_speed.innerHTML = app.speed_left;
-			    right_motor_speed.innerHTML = app.speed_right;
-			    
-			    //console.log(vec, tester.css('top'), tester.css('left'));
-			    //tester.css('top', (parseInt(tester.css('top').substr(0, tester.css('top').length - 2), 10) - vec.y) + 'px');
-			    //tester.css('left', (parseInt(tester.css('left').substr(0, tester.css('left').length - 2), 10) + vec.x) + 'px');
-			     
-			}, 50);
-		
-         } else{
-		    	
-		    	console.log('Bluetooth is not connected.');
-		    	
-			}
     },
     
     tankdrive: function(x, y) {
@@ -148,44 +246,6 @@ var app = {
 	    
 	},
     
-	/*
-	    bind any events that are required on startup to listeners:
-	*/
-    bindEvents: function() {
-        
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-        connectButton.addEventListener('touchend', app.manageConnection, false);
-        
-        // left.addEventListener('touchend', app.left, false);
-        // forward.addEventListener('touchend', app.forward, false);
-        // back.addEventListener('touchend', app.back, false);
-        // right.addEventListener('touchend', app.right, false);
-//         
-        // var stop = document.getElementById("stop");
-        // stop.addEventListener('touchend', app.stop, false);
-        
-    },
-	
-	left: function() {
-		bluetoothSerial.write('a', app.successWrite, app.failWrite);
-	},
-	
-	forward: function() {
-		bluetoothSerial.write('w', app.successWrite, app.failWrite);
-	},
-	
-	back: function() {
-		bluetoothSerial.write('s', app.successWrite, app.failWrite);
-	},
-	
-	right: function() {
-		bluetoothSerial.write('d', app.successWrite, app.failWrite);
-	},
-	
-	stop: function() {
-		bluetoothSerial.write('T', app.successWrite, app.failWrite);
-	},
-	
 	successWrite: function() {
 		//alert('successful write');
 	},
@@ -194,39 +254,9 @@ var app = {
 		alert('fail write');
 	},
 	
-/*
-    this runs when the device is ready for user interaction:
-*/
-    onDeviceReady: function() {
-        // check to see if Bluetooth is turned on.
-        // this function is called only
-        //if isEnabled(), below, returns success:
-        var listPorts = function() {
-            // list the available BT ports:
-            bluetoothSerial.list(
-                function(results) {
-                    app.display(JSON.stringify(results));
-                },
-                function(error) {
-                    app.display(JSON.stringify(error));
-                }
-            );
-        }
-
-        // if isEnabled returns failure, this function is called:
-        var notEnabled = function() {
-            app.display("Bluetooth is not enabled.")
-        }
-
-         // check if Bluetooth is on:
-        bluetoothSerial.isEnabled(
-            listPorts,
-            notEnabled
-        );
-    },
-/*
-    Connects if not connected, and disconnects if connected:
-*/
+	/*
+	    Connects if not connected, and disconnects if connected:
+	*/
     manageConnection: function() {
 
         // connect() will get called only if isConnected() (below)
@@ -259,27 +289,10 @@ var app = {
         // here's the real action of the manageConnection function:
         bluetoothSerial.isConnected(disconnect, connect);
     },
-/*
-    subscribes to a Bluetooth serial listener for newline
-    and changes the button:
-*/
-    openPort: function() {
-        // if you get a good Bluetooth serial connection:
-        app.display("Connected to: " + app.macAddress);
-        // change the button's name:
-        connectButton.innerHTML = "Disconnect";
-        // set up a listener to listen for newlines
-        // and display any new data that's come in since
-        // the last newline:
-        bluetoothSerial.subscribe('\n', function (data) {
-            app.clear();
-            app.display(data);
-        });
-    },
-
-/*
-    unsubscribes from any Bluetooth serial listener and changes the button:
-*/
+    
+	/*
+	    unsubscribes from any Bluetooth serial listener and changes the button:
+	*/
     closePort: function() {
         // if you get a good Bluetooth serial connection:
         app.display("Disconnected from: " + app.macAddress);
@@ -293,16 +306,17 @@ var app = {
                 app.showError
         );
     },
-/*
-    appends @error to the message div:
-*/
+    
+	/*
+	    appends @error to the message div:
+	*/
     showError: function(error) {
         app.display(error);
     },
-
-/*
-    appends @message to the message div:
-*/
+	
+	/*
+	    appends @message to the message div:
+	*/
     display: function(message) {
         var display = document.getElementById("message"), // the message div
             lineBreak = document.createElement("br"),     // a line break

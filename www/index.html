@@ -4,6 +4,7 @@
     <head>
         <title>Kegbot Serial Controller</title>
         <link rel="stylesheet" type="text/css" href="css/JoyStick.css" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
     </head>
 
     <body>
@@ -12,28 +13,32 @@
         	
         	<div class="wrapper">
         		
-	        	<div id="message">Kegbot Controller</div>
-	        	
-	            <div id="ui">
-	                <button id="connectButton" class="btn">Connect</button>
-	            </div>
-	            
-	            <table style="width:100%; text-align:center;">
-		        	<tr>
-			        	<td id="ir_1">10</td>
-			        	<td id="ir_2">10</td>
-			        	<td id="ir_3">10</td>
-			        	<td id="ir_4">10</td>
-			        </tr>
-		        </table>
-	            
-		        <div id="joystick1" class="JoyStick"> </div>
-		        
-		        <div id="debug">
-		        	<h2>Debug Statistics</h2>
-		        	<div>Left Motor Speed: <span id="left-motor-speed">0</span>%</div>
-		        	<div>Right Motor Speed: <span id="right-motor-speed">0</span>%</div>
-		        </div>
+        		<div id="state_loading" class="state current">Loading...</div>
+        		
+        		<div id="state_control" class="state">
+	        		
+		        	<div id="message">Kegbot Controller</div>
+		        	
+		            <table style="width:100%; text-align:center;">
+			        	<tr>
+				        	<td id="ir_1">10</td>
+				        	<td id="ir_2">10</td>
+				        	<td id="ir_3">10</td>
+				        	<td id="ir_4">10</td>
+				        </tr>
+			        </table>
+		            
+			        <div id="joystick1" class="JoyStick"> </div>
+			        
+			        <div id="debug">
+			        	<h2>Debug Statistics</h2>
+			        	<div>Left Motor Speed: <span id="left-motor-speed">0</span>%</div>
+			        	<div>Right Motor Speed: <span id="right-motor-speed">0</span>%</div>
+			        	<div>Bluetooth reading: <span id="bluetooth-reading">N/A</span></div>
+			        </div>
+			        
+			    </div>
+			    
         	</div>
         	
         </div>

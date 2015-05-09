@@ -1,3 +1,11 @@
 #joystick1 {
 	margin: 50px auto;
 }
+
+.state {
+	display: none;
+}
+
+.state.current {
+	display: block;
+}
