@@ -10,25 +10,31 @@
     <body>
     	
         <div class="app">
-        	
         	<div class="wrapper">
+        		<!--<div id="state_loading" class="state current">Loading...</div>-->
         		
-        		<div id="state_loading" class="state current">Loading...</div>
-        		
-        		<div id="state_control" class="state">
-	        		
+        		<div id="state_control" class="state current">
 		        	<div id="message">Kegbot Controller</div>
 		        	
-		            <table style="width:100%; text-align:center;">
-			        	<tr>
-				        	<td id="ir_1">10</td>
-				        	<td id="ir_2">10</td>
-				        	<td id="ir_3">10</td>
-				        	<td id="ir_4">10</td>
-				        </tr>
-			        </table>
-		            
+		        	<div id="ir-readings">
+		        		
+		        		<div class="ir-threshold" style="bottom:80px;background-color:red;"></div>
+		        		<div class="ir-threshold" style="bottom:40px;background-color:blue;"></div>
+		        		<div class="ir-threshold" style="bottom:10px;background-color:red;"></div>
+		        		
+		        		<div id="ir-1" class="ir-reading"></div>
+		        		<div id="ir-2" class="ir-reading"></div>
+		        		<div id="ir-3" class="ir-reading"></div>
+		        		<div id="ir-4" class="ir-reading"></div>
+		        		<!--<div id="ir-5" class="ir-reading"></div>-->
+		        		
+		        	</div>
+		        	
 			        <div id="joystick1" class="JoyStick"> </div>
+			        
+			        <div id="wander-controls-container">
+			        	<button id="wander-button">Wander</button>
+			        </div>
 			        
 			        <div id="debug">
 			        	<h2>Debug Statistics</h2>
@@ -36,11 +42,8 @@
 			        	<div>Right Motor Speed: <span id="right-motor-speed">0</span>%</div>
 			        	<div>Bluetooth reading: <span id="bluetooth-reading">N/A</span></div>
 			        </div>
-			        
 			    </div>
-			    
         	</div>
-        	
         </div>
         
         <script type="text/javascript" src="cordova.js"></script>

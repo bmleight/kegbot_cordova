@@ -24,6 +24,11 @@ var app = {
     ir_2: null,
     ir_3: null,
     ir_4: null,
+    //ir_5: null,
+    
+    wander_button: null,
+    
+    mode: 1,
     
     bluetooth_debug: null,
     
@@ -34,7 +39,6 @@ var app = {
     	
     	//register for the deviceready event
     	document.addEventListener('deviceready', this.onDeviceReady, false);
-        //connectButton.addEventListener('touchend', app.manageConnection, false);
         
     },
     
@@ -49,25 +53,20 @@ var app = {
             app.bluetoothNotEnabled
         );
         
-        return;
-        
-        // if isEnabled returns failure, this function is called:
-        var notEnabled = function() {
-            alert('ohhhhh no');
-        }
-        
-        var listPorts = function() {
-            // list the available BT ports:
-            bluetoothSerial.list(
-                function(results) {
-                    app.display(JSON.stringify(results));
-                },
-                function(error) {
-                    app.display(JSON.stringify(error));
-                }
-            );
-        }
-		
+    },
+    
+    
+    toggle_wander_mode: function() {
+    	
+    	if(app.mode == 1) {
+    		app.mode = 2;
+    	} else {
+    		app.mode = 1;
+    	}
+    	
+    	var command = "{mode:" + app.mode + "}\n";
+    	
+    	bluetoothSerial.write(command, app.successWrite, app.failWrite);
     },
     
     openBluetoothConnection: function() {
@@ -82,12 +81,12 @@ var app = {
     
     bluetoothSuccess: function() {
     	
-    	app.updateState('control');
+    	//app.updateState('control');
     	
     	app.bluetooth_write_interval = setInterval(function() {
 		    
 		    var command = "{left:" + app.speed_left + ",right:" + app.speed_right + "}\n";
-	
+			
 		    bluetoothSerial.write(command, app.successWrite, app.failWrite);
 		    
 		    left_motor_speed_el.innerHTML = app.speed_left;
@@ -107,11 +106,19 @@ var app = {
     	
     	var irs = JSON.parse(data);
     	
-    	app.ir_1.innerHTML = irs.readings[0];
-	    app.ir_2.innerHTML = irs.readings[1];
-	    app.ir_3.innerHTML = irs.readings[2];
-	    app.ir_4.innerHTML = irs.readings[3];
-    	
+    	/*
+	    	app.ir_1.innerHTML = irs.readings[0];
+		    app.ir_2.innerHTML = irs.readings[1];
+		    app.ir_3.innerHTML = irs.readings[2];
+		    app.ir_4.innerHTML = irs.readings[3];
+		*/
+	    
+	    app.ir_1.setAttribute('style', 'height:' + irs.readings[0] + 'px');
+	    app.ir_2.setAttribute('style', 'height:' + irs.readings[1] + 'px');
+	    app.ir_3.setAttribute('style', 'height:' + irs.readings[2] + 'px');
+	    app.ir_4.setAttribute('style', 'height:' + irs.readings[3] + 'px');
+	    //app.ir_5.setAttribute('style', 'height:' + irs.readings[4] + 'px');
+	    
     },
     
     bluetoothReadFail: function() {
@@ -150,6 +157,7 @@ var app = {
 	    and changes the button:
 	*/
     openPort: function() {
+    	
     	/*
         // if you get a good Bluetooth serial connection:
         app.display("Connected to: " + app.macAddress);
@@ -162,6 +170,7 @@ var app = {
             app.clear();
             app.display(data);
         });*/
+        
     },
 
     store_elements: function() {
@@ -169,12 +178,19 @@ var app = {
     	this.left_motor_speed_el = document.getElementById("left-motor-speed");
     	this.right_motor_speed_el = document.getElementById("right-motor-speed");
     	
-    	this.ir_1 = document.getElementById("ir_1");
-    	this.ir_2 = document.getElementById("ir_2");
-    	this.ir_3 = document.getElementById("ir_3");
-    	this.ir_4 = document.getElementById("ir_4");
+    	this.ir_1 = document.getElementById("ir-1");
+    	this.ir_2 = document.getElementById("ir-2");
+    	this.ir_3 = document.getElementById("ir-3");
+    	this.ir_4 = document.getElementById("ir-4");
+    	//this.ir_5 = document.getElementById("ir-5");
     	
     	this.bluetooth_debug = $('#bluetooth-reading');
+    	
+    	this.wander_button = $('#wander-button');
+    	
+    	this.wander_button.click(function() {
+    		app.toggle_wander_mode();
+    	});
     	
     },
     
